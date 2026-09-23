@@ -2,7 +2,7 @@
 // src/layouts/Layout.astro
 import Header from '../components/Header.astro';
 import WhatsAppButton from '../components/WhatsAppButton.astro';
-import '../styles/global.css'; // <-- Importarlo como módulo asegura que Astro procese Tailwind correctamente
+import '../styles/global.css';
 
 interface Props {
   title: string;
@@ -16,6 +16,10 @@ const { title } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
+    <!-- ESTA LÍNEA CORRIGE TODAS LAS RUTAS DE LAS IMÁGENES AUTOMÁTICAMENTE -->
+    <base href={import.meta.env.BASE_URL + "/"} />
+    
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <title>{title}</title>
   </head>
   <body class="bg-slate-50 text-slate-900">
