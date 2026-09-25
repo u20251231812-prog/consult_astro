@@ -1,27 +1,28 @@
 ---
-const baseUrl = import.meta.env.BASE_URL;
+// src/components/Header.astro
+const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <header class="bg-white/90 backdrop-blur-md border-b border-slate-100 sticky top-0 z-50 shadow-sm font-sans">
   <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
     
     <!-- Logo -->
-    <a href={baseUrl} class="inline-block transition-transform duration-200 hover:scale-[1.02] active:scale-95">
+    <a href={`${baseUrl}/`} class="inline-block transition-transform duration-200 hover:scale-[1.02] active:scale-95">
       <img src="Sdent.jpg" alt="Logo SDent" width="180" height="60" class="cursor-pointer select-none object-contain h-auto" />
     </a>
 
-    <!-- Enlaces del Menú a Páginas Independientes -->
+    <!-- Enlaces del Menú -->
     <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-slate-700">
-      <a href={baseUrl} class="transition-colors duration-200 hover:text-[#01B4FF]">
+      <a href={`${baseUrl}/`} class="transition-colors duration-200 hover:text-[#01B4FF]">
         Inicio
       </a>
-      <a href={`${baseUrl}/consultorio`} class="transition-colors duration-200 hover:text-[#01B4FF]">
+      <a href={`${baseUrl}/consultorio/`} class="transition-colors duration-200 hover:text-[#01B4FF]">
         Consultorio
       </a>
-      <a href={`${baseUrl}/servicios`} class="transition-colors duration-200 hover:text-[#01B4FF]">
+      <a href={`${baseUrl}/servicios/`} class="transition-colors duration-200 hover:text-[#01B4FF]">
         Servicios
       </a>
-      <a href={`${baseUrl}/contacto`} class="transition-colors duration-200 hover:text-[#01B4FF]">
+      <a href={`${baseUrl}/contacto/`} class="transition-colors duration-200 hover:text-[#01B4FF]">
         Contacto
       </a>
     </nav>
