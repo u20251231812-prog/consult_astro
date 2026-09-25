@@ -24,17 +24,17 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '');
 
     <!-- Acciones -->
     <div class="flex items-center gap-3">
-      <!-- Botón Agendar Cita (Oculto en celular 'hidden', visible en pantalla grande 'md:inline-block') -->
+      <!-- Botón Agendar Cita (Oculto estricto en celular con !hidden) -->
       <a 
         href="https://wa.me/573136834065" 
         target="_blank" 
         rel="noopener noreferrer"
-        class="hidden md:inline-block bg-[#01B4FF] hover:bg-[#e5007d] text-white font-semibold px-5 py-2.5 rounded-md text-sm transition-all duration-200 hover:shadow-md active:scale-95"
+        class="!hidden md:!inline-block bg-[#01B4FF] hover:bg-[#e5007d] text-white font-semibold px-5 py-2.5 rounded-md text-sm transition-all duration-200 hover:shadow-md active:scale-95"
       >
         Agendar Cita
       </a>
 
-      <!-- Botón Hamburguesa (Solo visible en celular) -->
+      <!-- Botón Hamburguesa (Visible únicamente en celular) -->
       <button 
         id="menu-toggle"
         aria-label="Abrir menú"
@@ -48,76 +48,79 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '');
 
   </div>
 
-  <!-- Menú Desplegable Móvil (Estilizado y forzado a la derecha) -->
+  <!-- Menú Desplegable Móvil (Forzado a la derecha) -->
   <div 
     id="mobile-menu" 
-    class="hidden md:hidden bg-white/98 border-b border-slate-100 px-6 py-4 space-y-3 text-right shadow-lg transition-all duration-300 ease-in-out opacity-0 -translate-y-2"
+    class="hidden md:hidden bg-white/98 border-b border-slate-100 px-6 py-4 space-y-3 flex flex-col items-end text-right shadow-lg transition-all duration-300 ease-in-out opacity-0 -translate-y-2"
   >
-    <a href={`${baseUrl}/`} class="block text-slate-700 hover:text-[#01B4FF] font-semibold text-base py-1 transition-colors">Inicio</a>
-    <a href={`${baseUrl}/consultorio/`} class="block text-slate-700 hover:text-[#01B4FF] font-semibold text-base py-1 transition-colors">Consultorio</a>
-    <a href={`${baseUrl}/servicios/`} class="block text-slate-700 hover:text-[#01B4FF] font-semibold text-base py-1 transition-colors">Servicios</a>
-    <a href={`${baseUrl}/contacto/`} class="block text-slate-700 hover:text-[#01B4FF] font-semibold text-base py-1 transition-colors">Contacto</a>
+    <a href={`${baseUrl}/`} class="block w-full text-right text-slate-700 hover:text-[#01B4FF] font-semibold text-base py-1 transition-colors">Inicio</a>
+    <a href={`${baseUrl}/consultorio/`} class="block w-full text-right text-slate-700 hover:text-[#01B4FF] font-semibold text-base py-1 transition-colors">Consultorio</a>
+    <a href={`${baseUrl}/servicios/`} class="block w-full text-right text-slate-700 hover:text-[#01B4FF] font-semibold text-base py-1 transition-colors">Servicios</a>
+    <a href={`${baseUrl}/contacto/`} class="block w-full text-right text-slate-700 hover:text-[#01B4FF] font-semibold text-base py-1 transition-colors">Contacto</a>
   </div>
 </header>
 
-<!-- Compensación para evitar que el header cubra el inicio del contenido -->
+<!-- Espaciador fija la altura para evitar solapamientos -->
 <div class="h-20"></div>
 
 <script>
-  const toggleBtn = document.getElementById('menu-toggle');
-  const mobileMenu = document.getElementById('mobile-menu');
-  const header = document.getElementById('main-header');
+  function setupHeader() {
+    const toggleBtn = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const header = document.getElementById('main-header');
 
-  let isMenuOpen = false;
+    let isMenuOpen = false;
 
-  // Función para abrir/cerrar menú desplegable móvil
-  function toggleMobileMenu(forceClose = false) {
-    if (!mobileMenu) return;
+    function toggleMobileMenu(forceClose = false) {
+      if (!mobileMenu) return;
 
-    if (forceClose || isMenuOpen) {
-      // Cerrar menú
-      mobileMenu.classList.add('opacity-0', '-translate-y-2');
-      setTimeout(() => {
-        mobileMenu.classList.add('hidden');
-      }, 200);
-      isMenuOpen = false;
-    } else {
-      // Abrir menú
-      mobileMenu.classList.remove('hidden');
-      setTimeout(() => {
-        mobileMenu.classList.remove('opacity-0', '-translate-y-2');
-      }, 10);
-      isMenuOpen = true;
+      if (forceClose || isMenuOpen) {
+        mobileMenu.classList.add('opacity-0', '-translate-y-2');
+        setTimeout(() => {
+          mobileMenu.classList.add('hidden');
+        }, 200);
+        isMenuOpen = false;
+      } else {
+        mobileMenu.classList.remove('hidden');
+        setTimeout(() => {
+          mobileMenu.classList.remove('opacity-0', '-translate-y-2');
+        }, 10);
+        isMenuOpen = true;
+      }
     }
-  }
 
-  if (toggleBtn) {
-    toggleBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      toggleMobileMenu();
+    if (toggleBtn) {
+      // Remover oyentes anteriores si los hubiera
+      const newToggleBtn = toggleBtn.cloneNode(true);
+      toggleBtn.parentNode?.replaceChild(newToggleBtn, toggleBtn);
+
+      newToggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleMobileMenu();
+      });
+    }
+
+    let lastScrollY = window.scrollY;
+
+    window.addEventListener('scroll', () => {
+      if (!header) return;
+
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > lastScrollY && currentScrollY > 50) {
+        if (isMenuOpen) {
+          toggleMobileMenu(true);
+        }
+        header.classList.add('-translate-y-full');
+      } else if (currentScrollY < lastScrollY) {
+        header.classList.remove('-translate-y-full');
+      }
+
+      lastScrollY = currentScrollY;
     });
   }
 
-  // Ocultar header al bajar / Mostrar al subir + Auto-cerrar menú al hacer scroll
-  let lastScrollY = window.scrollY;
-
-  window.addEventListener('scroll', () => {
-    if (!header) return;
-
-    const currentScrollY = window.scrollY;
-
-    // Si el usuario hace scroll hacia abajo, cerrar el menú si está abierto
-    if (currentScrollY > lastScrollY && currentScrollY > 50) {
-      if (isMenuOpen) {
-        toggleMobileMenu(true);
-      }
-      // Ocultar header
-      header.classList.add('-translate-y-full');
-    } else if (currentScrollY < lastScrollY) {
-      // Mostrar header al subir
-      header.classList.remove('-translate-y-full');
-    }
-
-    lastScrollY = currentScrollY;
-  });
+  // Ejecución inicial y compatibilidad con navegación Astro
+  setupHeader();
+  document.addEventListener('astro:page-load', setupHeader);
 </script>
